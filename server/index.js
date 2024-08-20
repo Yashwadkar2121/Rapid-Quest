@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const connectDB = require("./db");
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const cors = require("cors");
 
 const app = express();
 
@@ -9,6 +10,11 @@ const app = express();
 connectDB();
 
 // Middleware
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Replace with your frontend URL
+  })
+);
 app.use(express.json());
 
 // Routes
