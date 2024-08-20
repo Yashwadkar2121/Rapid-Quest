@@ -591,7 +591,88 @@ const getCustomerDistribution = async (req, res) => {
 
 // Customer Lifetime Value by Cohorts
 const getCustomerLifetimeValue = async (req, res) => {
-  // Implement similar to other aggregations
+  try {
+    // Aggregate total spending per customer
+    const customerSpendings = await ShopifyOrder.aggregate([
+      {
+        $group: {
+          _id: "$customer_id",
+          totalSpent: {
+            $sum: { $toDouble: "$total_price_set.shop_money.amount" },
+          },
+        },
+      },
+    ]);
+
+    // Map customer IDs to their total spending
+    const spendingsMap = {};
+    customerSpendings.forEach((record) => {
+      spendingsMap[record._id] = record.totalSpent;
+    });
+
+    // Aggregate customers by cohort (month of first purchase)
+    const customerCLV = await Customer.aggregate([
+      {
+        $addFields: {
+          createdAt: { $dateFromString: { dateString: "$created_at" } },
+        },
+      },
+      {
+        $addFields: {
+          cohort: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+        },
+      },
+      {
+        $lookup: {
+          from: "shopifyOrders",
+          localField: "_id",
+          foreignField: "customer_id",
+          as: "orders",
+        },
+      },
+      {
+        $addFields: {
+          totalSpent: {
+            $sum: {
+              $map: {
+                input: "$orders",
+                as: "order",
+                in: { $toDouble: "$$order.total_price_set.shop_money.amount" },
+              },
+            },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$cohort",
+          totalCLV: { $sum: "$totalSpent" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          cohort: "$_id",
+          totalCLV: { $toDouble: "$totalCLV" },
+          count: { $toDouble: "$count" },
+          averageCLV: {
+            $cond: {
+              if: { $eq: ["$count", 0] },
+              then: 0,
+              else: { $divide: ["$totalCLV", "$count"] },
+            },
+          },
+        },
+      },
+      { $sort: { cohort: 1 } }, // Sort by cohort in ascending order
+    ]);
+
+    res.json(customerCLV);
+  } catch (error) {
+    console.error("Error fetching customer lifetime value by cohorts:", error);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
 module.exports = {
