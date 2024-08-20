@@ -574,18 +574,18 @@ const getRepeatCustomers = async (req, res) => {
 // Geographical Distribution of Customers
 const getCustomerDistribution = async (req, res) => {
   try {
-    const distribution = await Customer.aggregate([
-      {
-        $group: {
-          _id: "$default_address.city",
-          count: { $sum: 1 },
-        },
-      },
-      { $sort: { count: -1 } },
+    // Aggregate customer data by city
+    const customerDistribution = await Customer.aggregate([
+      { $group: { _id: "$default_address.city", count: { $sum: 1 } } },
+      { $project: { _id: 0, city: "$_id", count: 1 } },
+      { $sort: { count: 1 } }, // Optional: Sort by the count in descending order
     ]);
-    res.json(distribution);
+
+    // Respond with the aggregated data
+    res.json(customerDistribution);
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    console.error("Error fetching customer distribution:", error);
+    res.status(500).send("Internal Server Error");
   }
 };
 
