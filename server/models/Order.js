@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
-const OrderSchema = new mongoose.Schema({
+// Define the schema for shopifyOrders collection
+const ShopifyOrderSchema = new mongoose.Schema({
   total_price_set: {
     shop_money: {
       amount: Number,
@@ -9,4 +10,11 @@ const OrderSchema = new mongoose.Schema({
   created_at: Date,
 });
 
-module.exports = mongoose.model("Order", OrderSchema);
+// Create the model from the schema
+const ShopifyOrder = mongoose.model(
+  "ShopifyOrder",
+  ShopifyOrderSchema,
+  "shopifyOrders"
+);
+
+module.exports = ShopifyOrder;
