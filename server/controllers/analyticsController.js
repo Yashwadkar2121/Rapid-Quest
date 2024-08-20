@@ -249,11 +249,50 @@ const getSalesGrowthRate = async (req, res) => {
     res.status(500).json({ error: "Server error", details: error.message });
   }
 };
+// Formatting the response
+const formatDailyCustomers = (data) => {
+  return data.map((entry) => ({
+    date: `${entry._id.year}-${String(entry._id.month).padStart(
+      2,
+      "0"
+    )}-${String(entry._id.day).padStart(2, "0")}`,
+    newCustomers: entry.newCustomers,
+  }));
+};
 
+const formatMonthlyCustomers = (data) => {
+  return data.map((entry) => ({
+    month: `${entry._id.year}-${String(entry._id.month).padStart(2, "0")}`,
+    newCustomers: entry.newCustomers,
+  }));
+};
+
+const formatQuarterlyCustomers = (data) => {
+  return data.map((entry) => ({
+    year: entry._id.year,
+    quarter: entry._id.quarter,
+    newCustomers: entry.newCustomers,
+  }));
+};
+
+const formatYearlyCustomers = (data) => {
+  return data.map((entry) => ({
+    year: entry._id.year,
+    newCustomers: entry.newCustomers,
+  }));
+};
 // New Customers Added Over Time
 const getNewCustomersOverTime = async (req, res) => {
   try {
-    const customers = await Customer.aggregate([
+    // Daily new customers aggregation
+    const dailyCustomers = await Customer.aggregate([
+      {
+        $addFields: {
+          created_at: {
+            $dateFromString: { dateString: "$created_at" },
+          },
+        },
+      },
       {
         $group: {
           _id: {
@@ -266,9 +305,75 @@ const getNewCustomersOverTime = async (req, res) => {
       },
       { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
     ]);
-    res.json(customers);
+
+    // Monthly new customers aggregation
+    const monthlyCustomers = await Customer.aggregate([
+      {
+        $addFields: {
+          created_at: {
+            $dateFromString: { dateString: "$created_at" },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$created_at" },
+            month: { $month: "$created_at" },
+          },
+          newCustomers: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
+    ]);
+
+    // Quarterly new customers aggregation
+    const quarterlyCustomers = await Customer.aggregate([
+      {
+        $addFields: {
+          created_at: {
+            $dateFromString: { dateString: "$created_at" },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$created_at" },
+            quarter: { $ceil: { $divide: [{ $month: "$created_at" }, 3] } },
+          },
+          newCustomers: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.quarter": 1 } },
+    ]);
+
+    // Yearly new customers aggregation
+    const yearlyCustomers = await Customer.aggregate([
+      {
+        $addFields: {
+          created_at: {
+            $dateFromString: { dateString: "$created_at" },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { year: { $year: "$created_at" } },
+          newCustomers: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.year": 1 } },
+    ]);
+
+    res.json({
+      dailyCustomers: formatDailyCustomers(dailyCustomers),
+      monthlyCustomers: formatMonthlyCustomers(monthlyCustomers),
+      quarterlyCustomers: formatQuarterlyCustomers(quarterlyCustomers),
+      yearlyCustomers: formatYearlyCustomers(yearlyCustomers),
+    });
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error", details: error.message });
   }
 };
 
