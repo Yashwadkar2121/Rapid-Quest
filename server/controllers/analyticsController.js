@@ -127,7 +127,11 @@ const getTotalSalesOverTime = async (req, res) => {
     res.status(500).json({ error: "Server error", details: error.message });
   }
 };
-
+// const checkData = async (req, res) => {
+//   const sampleData = await ShopifyOrder.find().limit(1);
+//   console.log(sampleData);
+// };
+// checkData();
 // Sales Growth Rate Over Time
 const getSalesGrowthRate = async (req, res) => {
   try {
@@ -249,7 +253,6 @@ const getSalesGrowthRate = async (req, res) => {
     res.status(500).json({ error: "Server error", details: error.message });
   }
 };
-// Formatting the response
 const formatDailyCustomers = (data) => {
   return data.map((entry) => ({
     date: `${entry._id.year}-${String(entry._id.month).padStart(
@@ -378,8 +381,194 @@ const getNewCustomersOverTime = async (req, res) => {
 };
 
 // Number of Repeat Customers
+const formatDailyRepeatCustomers = (dailyRepeatCustomers) => {
+  return dailyRepeatCustomers.map((customer) => ({
+    date: `${customer._id.year}-${String(customer._id.month).padStart(
+      2,
+      "0"
+    )}-${String(customer._id.day).padStart(2, "0")}`,
+    repeatCustomers: customer.repeatCustomers,
+  }));
+};
+
+const formatMonthlyRepeatCustomers = (monthlyRepeatCustomers) => {
+  return monthlyRepeatCustomers.map((customer) => ({
+    month: `${customer._id.year}-${String(customer._id.month).padStart(
+      2,
+      "0"
+    )}`,
+    repeatCustomers: customer.repeatCustomers,
+  }));
+};
+
+const formatQuarterlyRepeatCustomers = (quarterlyRepeatCustomers) => {
+  return quarterlyRepeatCustomers.map((customer) => ({
+    year: customer._id.year,
+    quarter: customer._id.quarter,
+    repeatCustomers: customer.repeatCustomers,
+  }));
+};
+
+const formatYearlyRepeatCustomers = (yearlyRepeatCustomers) => {
+  return yearlyRepeatCustomers.map((customer) => ({
+    year: customer._id.year,
+    repeatCustomers: customer.repeatCustomers,
+  }));
+};
 const getRepeatCustomers = async (req, res) => {
-  // Implement based on the logic for repeat purchases
+  try {
+    // Daily Repeat Customers
+    const dailyRepeatCustomers = await ShopifyOrder.aggregate([
+      {
+        $addFields: {
+          created_at: {
+            $dateFromString: { dateString: "$created_at" }, // Convert string to Date if necessary
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$created_at" },
+            month: { $month: "$created_at" },
+            day: { $dayOfMonth: "$created_at" },
+            customerId: "$customer_id",
+          },
+          purchaseCount: { $sum: 1 },
+        },
+      },
+      {
+        $match: { purchaseCount: { $gt: 1 } }, // Filter customers with more than one purchase
+      },
+      {
+        $group: {
+          _id: {
+            year: "$_id.year",
+            month: "$_id.month",
+            day: "$_id.day",
+          },
+          repeatCustomers: { $sum: 1 }, // Count unique repeat customers
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
+    ]);
+
+    // Monthly Repeat Customers
+    const monthlyRepeatCustomers = await ShopifyOrder.aggregate([
+      {
+        $addFields: {
+          created_at: {
+            $dateFromString: { dateString: "$created_at" },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$created_at" },
+            month: { $month: "$created_at" },
+            customerId: "$customer_id",
+          },
+          purchaseCount: { $sum: 1 },
+        },
+      },
+      {
+        $match: { purchaseCount: { $gt: 1 } },
+      },
+      {
+        $group: {
+          _id: {
+            year: "$_id.year",
+            month: "$_id.month",
+          },
+          repeatCustomers: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
+    ]);
+
+    // Quarterly Repeat Customers
+    const quarterlyRepeatCustomers = await ShopifyOrder.aggregate([
+      {
+        $addFields: {
+          created_at: {
+            $dateFromString: { dateString: "$created_at" },
+          },
+        },
+      },
+      {
+        $addFields: {
+          quarter: { $ceil: { $divide: [{ $month: "$created_at" }, 3] } },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$created_at" },
+            quarter: "$quarter",
+            customerId: "$customer_id",
+          },
+          purchaseCount: { $sum: 1 },
+        },
+      },
+      {
+        $match: { purchaseCount: { $gt: 1 } },
+      },
+      {
+        $group: {
+          _id: {
+            year: "$_id.year",
+            quarter: "$_id.quarter",
+          },
+          repeatCustomers: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.quarter": 1 } },
+    ]);
+
+    // Yearly Repeat Customers
+    const yearlyRepeatCustomers = await ShopifyOrder.aggregate([
+      {
+        $addFields: {
+          created_at: {
+            $dateFromString: { dateString: "$created_at" },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$created_at" },
+            customerId: "$customer_id",
+          },
+          purchaseCount: { $sum: 1 },
+        },
+      },
+      {
+        $match: { purchaseCount: { $gt: 1 } },
+      },
+      {
+        $group: {
+          _id: { year: "$_id.year" },
+          repeatCustomers: { $sum: 1 }, // Count unique repeat customers
+        },
+      },
+      { $sort: { "_id.year": 1 } },
+    ]);
+
+    res.json({
+      dailyRepeatCustomers: formatDailyRepeatCustomers(dailyRepeatCustomers),
+      monthlyRepeatCustomers: formatMonthlyRepeatCustomers(
+        monthlyRepeatCustomers
+      ),
+      quarterlyRepeatCustomers: formatQuarterlyRepeatCustomers(
+        quarterlyRepeatCustomers
+      ),
+      yearlyRepeatCustomers: formatYearlyRepeatCustomers(yearlyRepeatCustomers),
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
 };
 
 // Geographical Distribution of Customers

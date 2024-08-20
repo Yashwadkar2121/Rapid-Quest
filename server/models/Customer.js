@@ -1,10 +1,17 @@
 const mongoose = require("mongoose");
 
 const CustomerSchema = new mongoose.Schema({
-  created_at: Date,
+  created_at: {
+    type: Date,
+    required: true,
+  },
   default_address: {
-    city: String,
+    city: {
+      type: String,
+      required: false, // Make city optional
+    },
   },
 });
 
-module.exports = mongoose.model("Customer", CustomerSchema, "shopifyCustomers");
+const Customer = mongoose.model("Customer", CustomerSchema, "shopifyCustomers");
+module.exports = Customer;
