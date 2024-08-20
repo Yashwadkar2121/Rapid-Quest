@@ -130,7 +130,124 @@ const getTotalSalesOverTime = async (req, res) => {
 
 // Sales Growth Rate Over Time
 const getSalesGrowthRate = async (req, res) => {
-  // Implement similar to getTotalSalesOverTime
+  try {
+    // Daily sales aggregation
+    const dailySales = await ShopifyOrder.aggregate([
+      {
+        $addFields: {
+          created_at: { $dateFromString: { dateString: "$created_at" } },
+          totalPrice: {
+            $ifNull: [{ $toDouble: "$total_price_set.shop_money.amount" }, 0],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$created_at" },
+            month: { $month: "$created_at" },
+            day: { $dayOfMonth: "$created_at" },
+          },
+          totalSales: { $sum: "$totalPrice" },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
+    ]);
+
+    // Monthly sales aggregation
+    const monthlySales = await ShopifyOrder.aggregate([
+      {
+        $addFields: {
+          created_at: { $dateFromString: { dateString: "$created_at" } },
+          totalPrice: {
+            $ifNull: [{ $toDouble: "$total_price_set.shop_money.amount" }, 0],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$created_at" },
+            month: { $month: "$created_at" },
+          },
+          totalSales: { $sum: "$totalPrice" },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
+    ]);
+
+    // Quarterly sales aggregation
+    const quarterlySales = await ShopifyOrder.aggregate([
+      {
+        $addFields: {
+          created_at: { $dateFromString: { dateString: "$created_at" } },
+          totalPrice: {
+            $ifNull: [{ $toDouble: "$total_price_set.shop_money.amount" }, 0],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$created_at" },
+            quarter: { $ceil: { $divide: [{ $month: "$created_at" }, 3] } },
+          },
+          totalSales: { $sum: "$totalPrice" },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.quarter": 1 } },
+    ]);
+
+    // Yearly sales aggregation
+    const yearlySales = await ShopifyOrder.aggregate([
+      {
+        $addFields: {
+          created_at: { $dateFromString: { dateString: "$created_at" } },
+          totalPrice: {
+            $ifNull: [{ $toDouble: "$total_price_set.shop_money.amount" }, 0],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { year: { $year: "$created_at" } },
+          totalSales: { $sum: "$totalPrice" },
+        },
+      },
+      { $sort: { "_id.year": 1 } },
+    ]);
+
+    // Function to calculate growth rates
+    const calculateGrowthRate = (data) => {
+      return data
+        .map((item, index, array) => {
+          if (index === 0) return null; // No previous period to compare
+
+          const previous = array[index - 1];
+          const growthRate =
+            ((item.totalSales - previous.totalSales) / previous.totalSales) *
+            100;
+
+          return {
+            ...item,
+            growthRate: isFinite(growthRate) ? growthRate.toFixed(2) : 0,
+          };
+        })
+        .slice(1); // Exclude the first entry which has no growth rate
+    };
+
+    // Format and calculate growth rates
+    res.json({
+      dailyGrowthRate: calculateGrowthRate(formatDailySales(dailySales)),
+      monthlyGrowthRate: calculateGrowthRate(formatMonthlySales(monthlySales)),
+      quarterlyGrowthRate: calculateGrowthRate(
+        formatQuarterlySales(quarterlySales)
+      ),
+      yearlyGrowthRate: calculateGrowthRate(formatYearlySales(yearlySales)),
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
 };
 
 // New Customers Added Over Time
