@@ -23,13 +23,11 @@ ChartJS.register(
 );
 
 const SalesChart = () => {
-  const [dailyData, setDailyData] = useState({ labels: [], datasets: [] });
-  const [monthlyData, setMonthlyData] = useState({ labels: [], datasets: [] });
-  const [quarterlyData, setQuarterlyData] = useState({
-    labels: [],
-    datasets: [],
-  });
-  const [yearlyData, setYearlyData] = useState({ labels: [], datasets: [] });
+  const [dailyData, setDailyData] = useState(null);
+  const [monthlyData, setMonthlyData] = useState(null);
+  const [quarterlyData, setQuarterlyData] = useState(null);
+  const [yearlyData, setYearlyData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
@@ -51,9 +49,11 @@ const SalesChart = () => {
         setYearlyData(
           formatChartData(response.data.yearlySales, "year", "Total Sales")
         );
+        setLoading(false); // Data has been loaded
       })
       .catch((error) => {
         console.error("Error fetching the sales data", error);
+        setLoading(false); // End loading state even if there's an error
       });
   }, []);
 
@@ -71,19 +71,23 @@ const SalesChart = () => {
     };
   };
 
+  if (loading) {
+    return <div>Loading...</div>; // Show loading indicator while data is being fetched
+  }
+
   return (
     <div>
       <h2>Daily Sales Over Time</h2>
-      <Line data={dailyData} />
+      {dailyData && <Line data={dailyData} />}
 
       <h2>Monthly Sales Over Time</h2>
-      <Line data={monthlyData} />
+      {monthlyData && <Line data={monthlyData} />}
 
       <h2>Quarterly Sales Over Time</h2>
-      <Line data={quarterlyData} />
+      {quarterlyData && <Line data={quarterlyData} />}
 
       <h2>Yearly Sales Over Time</h2>
-      <Line data={yearlyData} />
+      {yearlyData && <Line data={yearlyData} />}
     </div>
   );
 };
