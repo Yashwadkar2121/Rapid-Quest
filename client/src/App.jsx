@@ -1,14 +1,26 @@
-import "./App.css";
-import CLVByCohortsChart from "./components/CLVByCohortsChart";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import SalesChart from "./components/SalesChart";
+import SalesGrowthRateChart from "./components/SalesGrowthRateChart";
+import NewCustomersAdded from "./components/NewCustomersAdded";
+import CustomerDistributionChart from "./components/CustomerDistributionChart";
 
-const App = () => {
+function App() {
   return (
-    <div>
-      <h1>Shopify Data Visualizations</h1>
-      <CLVByCohortsChart />
-      {/* Include other charts here */}
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/sales-over-time" element={<SalesChart />}></Route>
+        <Route
+          path="/sales-growth-rate"
+          element={<SalesGrowthRateChart />}
+        ></Route>
+        <Route path="/new-customers" element={<NewCustomersAdded />}></Route>
+        <Route
+          path="/distribution-customers"
+          element={<CustomerDistributionChart />}
+        ></Route>
+      </Routes>
+    </BrowserRouter>
   );
-};
+}
 
 export default App;
