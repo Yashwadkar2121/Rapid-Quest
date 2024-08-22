@@ -12,7 +12,7 @@ connectDB();
 // Middleware
 app.use(
   cors({
-    origin: "rapid-quest-one.vercel.app",
+    origin: "https://rapid-quest-dashboard-kappa.vercel.app/",
     methods: ["GET"],
     credential: true,
   })
