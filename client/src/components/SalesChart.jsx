@@ -32,7 +32,9 @@ const SalesChart = ({ chartType = "daily" }) => {
 
   useEffect(() => {
     axios
-      .get("https://rapid-quest-server.onrender.com/sales-over-time")
+      .get(
+        "https://rapid-quest-server.onrender.com/api/analytics/sales-over-time"
+      )
       .then((response) => {
         setDailyData(
           formatChartData(response.data.dailySales, "date", "Total Sales")

@@ -13,7 +13,7 @@ const CustomerDistributionChart = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "https://rapid-quest-server.onrender.com/customer-distribution"
+          "https://rapid-quest-server.onrender.com/api/analytics/customer-distribution"
         );
 
         const data = response.data;
