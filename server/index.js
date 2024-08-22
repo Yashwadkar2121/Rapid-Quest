@@ -12,7 +12,7 @@ connectDB();
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "rapid-quest-one.vercel.app",
     methods: ["GET"],
     credential: true,
   })
