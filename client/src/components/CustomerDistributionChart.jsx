@@ -42,6 +42,8 @@ const CustomerDistributionChart = () => {
         });
       } catch (error) {
         console.error("Error fetching data:", error);
+        setChartData(null); // Reset chart data to null
+        alert("Error fetching data. Please try again later.");
       }
     };
 
