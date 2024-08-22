@@ -10,11 +10,10 @@ const app = express();
 connectDB();
 
 // Middleware
+app.use(cors());
 app.use(
   cors({
     origin: "https://rapid-quest-dashboard-kappa.vercel.app/",
-    methods: ["GET"],
-    credential: true,
   })
 );
 app.use(express.json());
