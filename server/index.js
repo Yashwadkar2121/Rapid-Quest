@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const connectDB = require("./db");
 const analyticsRoutes = require("./routes/analyticsRoutes");
@@ -13,6 +12,8 @@ connectDB();
 app.use(
   cors({
     origin: "https://rapid-quest-one.vercel.app",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
   })
 );
 app.use(express.json());
