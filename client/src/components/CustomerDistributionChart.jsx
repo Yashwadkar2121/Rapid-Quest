@@ -13,7 +13,7 @@ const CustomerDistributionChart = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/analytics/customer-distribution"
+          "rapid-quest-dashboard-kappa.vercel.app/customer-distribution"
         );
 
         const data = response.data;

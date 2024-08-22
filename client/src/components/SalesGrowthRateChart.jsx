@@ -30,7 +30,7 @@ const SalesGrowthRate = ({ chartType = "daily" }) => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/analytics/sales-growth-rate"
+          "rapid-quest-dashboard-kappa.vercel.app/sales-growth-rate"
         );
         console.log(response.data); // Log the response to verify structure
         setDailyGrowthRate(response.data.dailyGrowthRate || []);
