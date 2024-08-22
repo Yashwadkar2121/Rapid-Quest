@@ -12,7 +12,7 @@ connectDB();
 app.use(
   cors({
     origin: "https://rapid-quest-one.vercel.app",
-    methods: ["GET", "POST"],
+    methods: ["GET"],
     allowedHeaders: ["Content-Type"],
   })
 );
