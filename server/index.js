@@ -11,7 +11,7 @@ connectDB();
 // Middleware
 app.use(
   cors({
-    origin: "https://rapid-quest-one.vercel.app",
+    origin: "https://rapid-quest.onrender.com",
     methods: ["GET"],
     allowedHeaders: ["Content-Type"],
   })
