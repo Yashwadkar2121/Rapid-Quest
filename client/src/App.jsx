@@ -7,30 +7,32 @@ import NumberRepeatCustomers from "./components/NumberRepeatCustomers";
 import Home from "./components/Home";
 
 function App() {
-  const yearlyData = { labels: [], datasets: [] }; // Initialize your data here
-
   return (
     <>
-      <Home yearlyData={yearlyData} />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}></Route>
-          <Route path="/sales-over-time" element={<SalesChart />}></Route>
-          <Route
-            path="/sales-growth-rate"
-            element={<SalesGrowthRateChart />}
-          ></Route>
-          <Route path="/new-customers" element={<NewCustomersAdded />}></Route>
-          <Route
-            path="/distribution-customers"
-            element={<CustomerDistributionChart />}
-          ></Route>
-          <Route
-            path="/repeat-customers"
-            element={<NumberRepeatCustomers />}
-          ></Route>
-        </Routes>
-      </BrowserRouter>
+      <div className="m-20 mt-10">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />}></Route>
+            <Route path="/sales-over-time" element={<SalesChart />}></Route>
+            <Route
+              path="/sales-growth-rate"
+              element={<SalesGrowthRateChart />}
+            ></Route>
+            <Route
+              path="/new-customers"
+              element={<NewCustomersAdded />}
+            ></Route>
+            <Route
+              path="/distribution-customers"
+              element={<CustomerDistributionChart />}
+            ></Route>
+            <Route
+              path="/repeat-customers"
+              element={<NumberRepeatCustomers />}
+            ></Route>
+          </Routes>
+        </BrowserRouter>
+      </div>
     </>
   );
 }

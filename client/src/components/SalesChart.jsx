@@ -21,8 +21,9 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+import PropTypes from "prop-types";
 
-const SalesChart = () => {
+const SalesChart = ({ chartType = "daily" }) => {
   const [dailyData, setDailyData] = useState(null);
   const [monthlyData, setMonthlyData] = useState(null);
   const [quarterlyData, setQuarterlyData] = useState(null);
@@ -77,19 +78,46 @@ const SalesChart = () => {
 
   return (
     <div>
-      <h2>Daily Sales Over Time</h2>
-      {dailyData && <Line data={dailyData} />}
-
-      <h2>Monthly Sales Over Time</h2>
-      {monthlyData && <Line data={monthlyData} />}
-
-      <h2>Quarterly Sales Over Time</h2>
-      {quarterlyData && <Line data={quarterlyData} />}
-
-      <h2>Yearly Sales Over Time</h2>
-      {yearlyData && <Line data={yearlyData} />}
+      <h1 className="text-center text-2xl font-medium mt-5">
+        Total Sales Over Time
+      </h1>
+      {chartType === "daily" && (
+        <div className="my-5 ">
+          <h2 className="text-xl font-medium text-center">
+            Daily Sales Over Time
+          </h2>
+          <Line data={dailyData} />
+        </div>
+      )}
+      {chartType === "monthly" && (
+        <div className="my-5 ">
+          <h2 className="text-xl font-medium text-center">
+            Monthly Sales Over Time
+          </h2>
+          <Line data={monthlyData} />
+        </div>
+      )}
+      {chartType === "quarterly" && (
+        <div className="my-5 ">
+          <h2 className="text-xl font-medium text-center">
+            Quarterly Sales Over Time
+          </h2>
+          <Line data={quarterlyData} />
+        </div>
+      )}
+      {chartType === "yearly" && (
+        <div className="my-5 ">
+          <h2 className="text-xl font-medium text-center">
+            Yearly Sales Over Time
+          </h2>
+          <Line data={yearlyData} />
+        </div>
+      )}
     </div>
   );
+};
+SalesChart.propTypes = {
+  chartType: PropTypes.string,
 };
 
 export default SalesChart;

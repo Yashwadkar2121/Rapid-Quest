@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import PropTypes from "prop-types";
 
 ChartJS.register(
   CategoryScale,
@@ -20,7 +21,7 @@ ChartJS.register(
   Legend
 );
 
-const NewCustomersAdded = () => {
+const NewCustomersAdded = ({ chartToDisplay }) => {
   const [dailyData, setDailyData] = useState({ labels: [], datasets: [] });
   const [monthlyData, setMonthlyData] = useState({ labels: [], datasets: [] });
   const [quarterlyData, setQuarterlyData] = useState({
@@ -35,8 +36,6 @@ const NewCustomersAdded = () => {
         const response = await axios.get(
           "http://localhost:5000/api/analytics/new-customers"
         );
-        console.log(response.data); // Log the full response data
-
         const {
           dailyCustomers = [],
           monthlyCustomers = [],
@@ -82,29 +81,51 @@ const NewCustomersAdded = () => {
 
   return (
     <div>
-      <h1>Customer Data Visualization</h1>
+      <h1 className="text-center text-2xl font-medium mt-5">
+        Customer Data Visualization
+      </h1>
 
-      <div>
-        <h2>Daily New Customers</h2>
-        <Bar data={dailyData} options={{ responsive: true }} />
-      </div>
+      {(chartToDisplay === "daily" || !chartToDisplay) && (
+        <div className="my-5 ">
+          <h2 className="text-xl font-medium text-center">
+            Daily New Customers
+          </h2>
+          <Bar data={dailyData} options={{ responsive: true }} />
+        </div>
+      )}
 
-      <div>
-        <h2>Monthly New Customers</h2>
-        <Bar data={monthlyData} options={{ responsive: true }} />
-      </div>
+      {(chartToDisplay === "monthly" || !chartToDisplay) && (
+        <div className="my-5">
+          <h2 className="text-xl font-medium text-center">
+            Monthly New Customers
+          </h2>
+          <Bar data={monthlyData} options={{ responsive: true }} />
+        </div>
+      )}
 
-      <div>
-        <h2>Quarterly New Customers</h2>
-        <Bar data={quarterlyData} options={{ responsive: true }} />
-      </div>
+      {(chartToDisplay === "quarterly" || !chartToDisplay) && (
+        <div className="my-5">
+          <h2 className="text-xl font-medium text-center">
+            Quarterly New Customers
+          </h2>
+          <Bar data={quarterlyData} options={{ responsive: true }} />
+        </div>
+      )}
 
-      <div>
-        <h2>Yearly New Customers</h2>
-        <Bar data={yearlyData} options={{ responsive: true }} />
-      </div>
+      {(chartToDisplay === "yearly" || !chartToDisplay) && (
+        <div className="my-5">
+          <h2 className="text-xl font-medium text-center">
+            Yearly New Customers
+          </h2>
+          <Bar data={yearlyData} options={{ responsive: true }} />
+        </div>
+      )}
     </div>
   );
+};
+
+NewCustomersAdded.propTypes = {
+  chartToDisplay: PropTypes.string, // Define prop type for chartToDisplay
 };
 
 export default NewCustomersAdded;

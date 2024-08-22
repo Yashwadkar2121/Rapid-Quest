@@ -19,8 +19,8 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-const SalesGrowthRate = () => {
+import PropTypes from "prop-types";
+const SalesGrowthRate = ({ chartType = "daily" }) => {
   const [dailyGrowthRate, setDailyGrowthRate] = useState([]);
   const [monthlyGrowthRate, setMonthlyGrowthRate] = useState([]);
   const [quarterlyGrowthRate, setQuarterlyGrowthRate] = useState([]);
@@ -79,30 +79,47 @@ const SalesGrowthRate = () => {
 
   return (
     <div>
-      <h1>Sales Growth Rate Visualization</h1>
+      <h1 className="text-center text-2xl font-medium mt-5">
+        Sales Growth Rate Visualization
+      </h1>
 
-      <div>
-        <h2>Daily Growth Rate</h2>
-        <Bar data={dailyChartData} options={{ responsive: true }} />
-      </div>
+      {chartType === "daily" && (
+        <div className="my-5 ">
+          <h2 className="text-xl font-medium text-center">Daily Growth Rate</h2>
+          <Bar data={dailyChartData} options={{ responsive: true }} />
+        </div>
+      )}
 
-      <div>
-        <h2>Monthly Growth Rate</h2>
-        <Bar data={monthlyChartData} options={{ responsive: true }} />
-      </div>
+      {chartType === "monthly" && (
+        <div className="my-5 ">
+          <h2 className="text-xl font-medium text-center">
+            Monthly Growth Rate
+          </h2>
+          <Bar data={monthlyChartData} options={{ responsive: true }} />
+        </div>
+      )}
 
-      <div>
-        <h2>Quarterly Growth Rate</h2>
-        <Bar data={quarterlyChartData} options={{ responsive: true }} />
-      </div>
+      {chartType === "quarterly" && (
+        <div className="my-5 ">
+          <h2 className="text-xl font-medium text-center">
+            Quarterly Growth Rate
+          </h2>
+          <Bar data={quarterlyChartData} options={{ responsive: true }} />
+        </div>
+      )}
 
-      <div>
-        <h2>Yearly Growth Rate</h2>
-        <Bar data={yearlyChartData} options={{ responsive: true }} />
-      </div>
+      {chartType === "yearly" && (
+        <div className="my-5 ">
+          <h2 className="text-xl font-medium text-center">
+            Yearly Growth Rate
+          </h2>
+          <Bar data={yearlyChartData} options={{ responsive: true }} />
+        </div>
+      )}
     </div>
   );
 };
-
+SalesGrowthRate.propTypes = {
+  chartType: PropTypes.string,
+};
 export default SalesGrowthRate;
-  

@@ -46,11 +46,13 @@ const CustomerDistributionChart = () => {
     };
 
     fetchData();
-  }, [] );
+  }, []);
 
   return (
     <div>
-      <h1>Customer Distribution by City</h1>
+      <h1 className="text-center text-2xl font-medium my-5">
+        Customer Distribution by City
+      </h1>
       {chartData ? (
         <Pie data={chartData} options={{ responsive: true }} />
       ) : (
