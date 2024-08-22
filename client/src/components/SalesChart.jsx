@@ -59,6 +59,12 @@ const SalesChart = ({ chartType = "daily" }) => {
   }, []);
 
   const formatChartData = (data, labelKey, dataKey) => {
+    if (!data) {
+      return {
+        labels: [],
+        datasets: [],
+      };
+    }
     return {
       labels: data?.map((item) => item[labelKey]) || [],
       datasets: [
