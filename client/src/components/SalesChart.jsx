@@ -32,7 +32,7 @@ const SalesChart = ({ chartType = "daily" }) => {
 
   useEffect(() => {
     axios
-      .get("rapid-quest-dashboard-kappa.vercel.app/sales-over-time")
+      .get("https://rapid-quest-dashboard-kappa.vercel.app/sales-over-time")
       .then((response) => {
         setDailyData(
           formatChartData(response.data.dailySales, "date", "Total Sales")

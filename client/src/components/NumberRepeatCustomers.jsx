@@ -27,7 +27,7 @@ const NumberRepeatCustomers = ({ timeFrame = "daily" }) => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "rapid-quest-dashboard-kappa.vercel.app/repeat-customers"
+          "https://rapid-quest-dashboard-kappa.vercel.app/repeat-customers"
         );
         const data = response.data;
 

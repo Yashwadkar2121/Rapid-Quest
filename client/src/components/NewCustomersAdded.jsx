@@ -34,7 +34,7 @@ const NewCustomersAdded = ({ chartToDisplay }) => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "rapid-quest-dashboard-kappa.vercel.app/new-customers"
+          "https://rapid-quest-dashboard-kappa.vercel.app/new-customers"
         );
         const {
           dailyCustomers = [],
