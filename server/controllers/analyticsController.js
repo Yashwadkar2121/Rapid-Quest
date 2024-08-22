@@ -1,6 +1,12 @@
 const ShopifyOrder = require("../models/Order");
 const Customer = require("../models/Customer");
 
+// const checkData = async (req, res) => {
+//   const sampleData = await ShopifyOrder.find().limit(1);
+//   console.log(sampleData);
+// };
+// checkData();
+
 // Total Sales Over Time
 const formatDailySales = (dailySales) => {
   return dailySales.map((sale) => ({
@@ -127,11 +133,6 @@ const getTotalSalesOverTime = async (req, res) => {
     res.status(500).json({ error: "Server error", details: error.message });
   }
 };
-// const checkData = async (req, res) => {
-//   const sampleData = await ShopifyOrder.find().limit(1);
-//   console.log(sampleData);
-// };
-// checkData();
 // Sales Growth Rate Over Time
 const getSalesGrowthRate = async (req, res) => {
   try {
@@ -381,193 +382,177 @@ const getNewCustomersOverTime = async (req, res) => {
 };
 
 // Number of Repeat Customers
-const formatDailyRepeatCustomers = (dailyRepeatCustomers) => {
-  return dailyRepeatCustomers.map((customer) => ({
-    date: `${customer._id.year}-${String(customer._id.month).padStart(
-      2,
-      "0"
-    )}-${String(customer._id.day).padStart(2, "0")}`,
-    repeatCustomers: customer.repeatCustomers,
-  }));
-};
-
-const formatMonthlyRepeatCustomers = (monthlyRepeatCustomers) => {
-  return monthlyRepeatCustomers.map((customer) => ({
-    month: `${customer._id.year}-${String(customer._id.month).padStart(
-      2,
-      "0"
-    )}`,
-    repeatCustomers: customer.repeatCustomers,
-  }));
-};
-
-const formatQuarterlyRepeatCustomers = (quarterlyRepeatCustomers) => {
-  return quarterlyRepeatCustomers.map((customer) => ({
-    year: customer._id.year,
-    quarter: customer._id.quarter,
-    repeatCustomers: customer.repeatCustomers,
-  }));
-};
-
-const formatYearlyRepeatCustomers = (yearlyRepeatCustomers) => {
-  return yearlyRepeatCustomers.map((customer) => ({
-    year: customer._id.year,
-    repeatCustomers: customer.repeatCustomers,
-  }));
-};
 const getRepeatCustomers = async (req, res) => {
   try {
-    // Daily Repeat Customers
-    const dailyRepeatCustomers = await ShopifyOrder.aggregate([
-      {
-        $addFields: {
-          created_at: {
-            $dateFromString: { dateString: "$created_at" }, // Convert string to Date if necessary
-          },
-        },
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$created_at" },
-            month: { $month: "$created_at" },
-            day: { $dayOfMonth: "$created_at" },
-            customerId: "$customer_id",
-          },
-          purchaseCount: { $sum: 1 },
-        },
-      },
-      {
-        $match: { purchaseCount: { $gt: 1 } }, // Filter customers with more than one purchase
-      },
-      {
-        $group: {
-          _id: {
-            year: "$_id.year",
-            month: "$_id.month",
-            day: "$_id.day",
-          },
-          repeatCustomers: { $sum: 1 }, // Count unique repeat customers
-        },
-      },
-      { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
-    ]);
+    const timeFrames = ["daily", "monthly", "quarterly", "yearly"];
 
-    // Monthly Repeat Customers
-    const monthlyRepeatCustomers = await ShopifyOrder.aggregate([
-      {
-        $addFields: {
-          created_at: {
-            $dateFromString: { dateString: "$created_at" },
+    const pipelines = {
+      daily: [
+        {
+          $project: {
+            customerId: "$customer.id",
+            created_at: {
+              $dateToString: {
+                format: "%Y-%m-%d",
+                date: {
+                  $convert: { input: "$created_at", to: "date", onError: null },
+                },
+              },
+            },
           },
         },
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$created_at" },
-            month: { $month: "$created_at" },
-            customerId: "$customer_id",
+        {
+          $group: {
+            _id: { customerId: "$customerId", date: "$created_at" },
+            orderCount: { $sum: 1 },
           },
-          purchaseCount: { $sum: 1 },
         },
-      },
-      {
-        $match: { purchaseCount: { $gt: 1 } },
-      },
-      {
-        $group: {
-          _id: {
-            year: "$_id.year",
-            month: "$_id.month",
+        {
+          $match: { orderCount: { $gt: 1 } },
+        },
+        {
+          $group: {
+            _id: "$_id.customerId",
+            orders: { $push: { date: "$_id.date", count: "$orderCount" } },
           },
-          repeatCustomers: { $sum: 1 },
         },
-      },
-      { $sort: { "_id.year": 1, "_id.month": 1 } },
-    ]);
+      ],
+      monthly: [
+        {
+          $project: {
+            customerId: "$customer.id",
+            month: {
+              $dateToString: {
+                format: "%Y-%m",
+                date: {
+                  $convert: { input: "$created_at", to: "date", onError: null },
+                },
+              },
+            },
+          },
+        },
+        {
+          $group: {
+            _id: { customerId: "$customerId", month: "$month" },
+            orderCount: { $sum: 1 },
+          },
+        },
+        {
+          $match: { orderCount: { $gt: 1 } },
+        },
+        {
+          $group: {
+            _id: "$_id.customerId",
+            orders: { $push: { month: "$_id.month", count: "$orderCount" } },
+          },
+        },
+      ],
+      quarterly: [
+        {
+          $project: {
+            customerId: "$customer.id",
+            year: {
+              $dateToString: {
+                format: "%Y",
+                date: {
+                  $convert: { input: "$created_at", to: "date", onError: null },
+                },
+              },
+            },
+            quarter: {
+              $concat: [
+                {
+                  $toString: {
+                    $ceil: {
+                      $divide: [
+                        {
+                          $month: {
+                            $convert: {
+                              input: "$created_at",
+                              to: "date",
+                              onError: null,
+                            },
+                          },
+                        },
+                        3,
+                      ],
+                    },
+                  },
+                },
+                "-Q",
+              ],
+            },
+          },
+        },
+        {
+          $group: {
+            _id: {
+              customerId: "$customerId",
+              year: "$year",
+              quarter: "$quarter",
+            },
+            orderCount: { $sum: 1 },
+          },
+        },
+        {
+          $match: { orderCount: { $gt: 1 } },
+        },
+        {
+          $group: {
+            _id: "$_id.customerId",
+            orders: {
+              $push: {
+                year: "$_id.year",
+                quarter: "$_id.quarter",
+                count: "$orderCount",
+              },
+            },
+          },
+        },
+      ],
+      yearly: [
+        {
+          $project: {
+            customerId: "$customer.id",
+            year: {
+              $dateToString: {
+                format: "%Y",
+                date: {
+                  $convert: { input: "$created_at", to: "date", onError: null },
+                },
+              },
+            },
+          },
+        },
+        {
+          $group: {
+            _id: { customerId: "$customerId", year: "$year" },
+            orderCount: { $sum: 1 },
+          },
+        },
+        {
+          $match: { orderCount: { $gt: 1 } },
+        },
+        {
+          $group: {
+            _id: "$_id.customerId",
+            orders: { $push: { year: "$_id.year", count: "$orderCount" } },
+          },
+        },
+      ],
+    };
 
-    // Quarterly Repeat Customers
-    const quarterlyRepeatCustomers = await ShopifyOrder.aggregate([
-      {
-        $addFields: {
-          created_at: {
-            $dateFromString: { dateString: "$created_at" },
-          },
-        },
-      },
-      {
-        $addFields: {
-          quarter: { $ceil: { $divide: [{ $month: "$created_at" }, 3] } },
-        },
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$created_at" },
-            quarter: "$quarter",
-            customerId: "$customer_id",
-          },
-          purchaseCount: { $sum: 1 },
-        },
-      },
-      {
-        $match: { purchaseCount: { $gt: 1 } },
-      },
-      {
-        $group: {
-          _id: {
-            year: "$_id.year",
-            quarter: "$_id.quarter",
-          },
-          repeatCustomers: { $sum: 1 },
-        },
-      },
-      { $sort: { "_id.year": 1, "_id.quarter": 1 } },
-    ]);
+    const results = await Promise.all(
+      timeFrames.map(async (frame) => {
+        const data = await ShopifyOrder.aggregate(pipelines[frame]);
+        return { timeFrame: frame, data };
+      })
+    );
 
-    // Yearly Repeat Customers
-    const yearlyRepeatCustomers = await ShopifyOrder.aggregate([
-      {
-        $addFields: {
-          created_at: {
-            $dateFromString: { dateString: "$created_at" },
-          },
-        },
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$created_at" },
-            customerId: "$customer_id",
-          },
-          purchaseCount: { $sum: 1 },
-        },
-      },
-      {
-        $match: { purchaseCount: { $gt: 1 } },
-      },
-      {
-        $group: {
-          _id: { year: "$_id.year" },
-          repeatCustomers: { $sum: 1 }, // Count unique repeat customers
-        },
-      },
-      { $sort: { "_id.year": 1 } },
-    ]);
-
-    res.json({
-      dailyRepeatCustomers: formatDailyRepeatCustomers(dailyRepeatCustomers),
-      monthlyRepeatCustomers: formatMonthlyRepeatCustomers(
-        monthlyRepeatCustomers
-      ),
-      quarterlyRepeatCustomers: formatQuarterlyRepeatCustomers(
-        quarterlyRepeatCustomers
-      ),
-      yearlyRepeatCustomers: formatYearlyRepeatCustomers(yearlyRepeatCustomers),
-    });
+    res.json(results);
   } catch (error) {
-    res.status(500).json({ error: "Server error", details: error.message });
+    console.error("Error fetching repeat customers:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
