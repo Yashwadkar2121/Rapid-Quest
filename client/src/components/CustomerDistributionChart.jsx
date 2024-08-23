@@ -15,7 +15,9 @@ const CustomerDistributionChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/analytics/customer-distribution`);
+        const response = await axios.get(
+          `${BASE_URL}/api/analytics/customer-distribution`
+        );
 
         const data = response.data;
 
@@ -56,7 +58,11 @@ const CustomerDistributionChart = () => {
       <h1 className="text-center text-2xl font-medium my-5">
         Customer Distribution by City
       </h1>
-      {chartData ? <Pie data={chartData} options={{ responsive: true }} /> : <p>Loading...</p>}
+      {chartData ? (
+        <Pie data={chartData} options={{ responsive: true }} />
+      ) : (
+        <p className="text-center text-xl font-bold">Loading...</p>
+      )}
     </div>
   );
 };

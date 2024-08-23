@@ -86,7 +86,7 @@ const SalesChart = ({ chartType = "daily" }) => {
   };
 
   if (loading) {
-    return <div>Loading...</div>; // Show loading indicator while data is being fetched
+    return <div className="text-center text-xl font-bold">Loading...</div>;
   }
 
   return (

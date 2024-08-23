@@ -90,7 +90,7 @@ const SalesGrowthRate = ({ chartType = "daily" }) => {
   );
 
   if (loading) {
-    return <div>Loading...</div>; // Show loading indicator while data is being fetched
+    return <div className="text-center text-xl font-bold">Loading...</div>; // Show loading indicator while data is being fetched
   }
 
   return (
@@ -132,6 +132,7 @@ const SalesGrowthRate = ({ chartType = "daily" }) => {
           <Bar data={yearlyChartData} options={{ responsive: true }} />
         </div>
       )}
+      
     </div>
   );
 };

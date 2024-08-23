@@ -8,7 +8,10 @@ import { Link } from "react-router-dom";
 const Home = () => {
   return (
     <div>
-      <h1 className="font-bold text-5xl text-center">Home Component</h1>
+      <h1 className="font-bold text-5xl text-center mb-5">
+        Transforming Shopify Data into Actionable Insights with Real-Time
+        Visualizations
+      </h1>
       <div className="flex justify-between items-center  gap-5">
         <div className="w-6/12">
           <Link to="/sales-over-time">
