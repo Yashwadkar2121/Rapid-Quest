@@ -12,7 +12,7 @@ function App() {
     <>
       <BrowserRouter>
         <Navbar />
-        <div className="p-3 md:p-20 md:mt-10 ">
+        <div className="p-3 md:p-20 md:pt-10 ">
           <Routes>
             <Route path="/" element={<Home />}></Route>
             <Route path="/sales-over-time" element={<SalesChart />}></Route>

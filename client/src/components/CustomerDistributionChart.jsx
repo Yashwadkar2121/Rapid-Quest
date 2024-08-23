@@ -31,7 +31,7 @@ const CustomerDistributionChart = () => {
                 () =>
                   `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(
                     Math.random() * 255
-                  )}, ${Math.floor(Math.random() * 255)}, 0.6)`
+                  )}, ${Math.floor(Math.random() * 255)}, 0.5)`
               ),
               borderColor: data.map(
                 () =>

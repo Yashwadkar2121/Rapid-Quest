@@ -309,7 +309,7 @@ const getNewCustomersOverTime = async (req, res) => {
       },
       { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
     ]);
-
+    console.log(dailyCustomers);
     // Monthly new customers aggregation
     const monthlyCustomers = await Customer.aggregate([
       {
@@ -588,13 +588,13 @@ const getCustomerLifetimeValue = async (req, res) => {
         },
       },
     ]);
-
+    // console.log(customerSpendings);
     // Map customer IDs to their total spending
     const spendingsMap = {};
     customerSpendings.forEach((record) => {
       spendingsMap[record._id] = record.totalSpent;
     });
-
+    // console.log(spendingsMap);
     // Aggregate customers by cohort (month of first purchase)
     const customerCLV = await Customer.aggregate([
       {
@@ -654,6 +654,7 @@ const getCustomerLifetimeValue = async (req, res) => {
     ]);
 
     res.json(customerCLV);
+    // console.log(customerCLV);
   } catch (error) {
     console.error("Error fetching customer lifetime value by cohorts:", error);
     res.status(500).send("Internal Server Error");

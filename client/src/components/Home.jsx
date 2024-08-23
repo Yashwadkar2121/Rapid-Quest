@@ -40,7 +40,7 @@ const Home = () => {
       <div className="flex flex-col md:flex-row md:justify-between md:items-center md:gap-5">
         <div className="w-full md:w-1/2">
           <Link to="/repeat-customers">
-            <NumberRepeatCustomers timeFrame="monthly" />
+            <NumberRepeatCustomers timeFrame="yearly" />
           </Link>
         </div>
       </div>
