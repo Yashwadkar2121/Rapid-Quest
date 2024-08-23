@@ -1,74 +1,92 @@
 import { Link, useLocation } from "react-router-dom";
-
+import { useState } from "react";
 function Navbar() {
   const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpen = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
-    <div>
-      <ul className="flex border-b justify-around">
-        <li className="mr-1">
+    <nav className="bg-slate-500 text-white ">
+      <div className="flex justify-between p-2 md:p-7 ">
+        <h2 className="text-xl md:text-3xl">Dashboard</h2>
+        {isOpen ? (
+          <button onClick={handleOpen}>
+            <i className="fa-solid fa-xmark text-xl"></i>
+          </button>
+        ) : (
+          <button onClick={handleOpen}>
+            <i className="fa-solid fa-bars text-xl"></i>
+          </button>
+        )}
+      </div>
+      <ul
+        className={`  ${
+          isOpen ? "block text-right min-h-screen p-2 md:p-7" : "hidden"
+        }`}
+      >
+        <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold ${
-              location.pathname === "/" ? "bg-blue-500 text-white " : ""
+            className={` text-white text-xl md:text-3xl hover:text-blue-800 font-semibold ${
+              location.pathname === "/" ? "text-blue-600 " : ""
             }`}
             to="/"
+            onClick={() => handleOpen()}
           >
             Home
           </Link>
         </li>
-        <li className="mr-1">
+        <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold ${
-              location.pathname === "/sales-over-time"
-                ? "bg-blue-500 text-white"
-                : ""
+            className={` text-white text-xl md:text-3xl hover:text-blue-800 font-semibold ${
+              location.pathname === "/sales-over-time" ? "text-blue-600" : ""
             }`}
             to="/sales-over-time"
+            onClick={() => handleOpen()}
           >
             SalesChart
           </Link>
         </li>
-        <li className="mr-1">
+        <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold ${
-              location.pathname === "/sales-growth-rate"
-                ? "bg-blue-500 text-white"
-                : ""
+            className={` text-white text-xl md:text-3xl hover:text-blue-800 font-semibold ${
+              location.pathname === "/sales-growth-rate" ? "text-blue-600" : ""
             }`}
             to="/sales-growth-rate"
+            onClick={() => handleOpen()}
           >
             SalesGrowthRateChart
           </Link>
         </li>
-        <li className="mr-1">
+        <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold ${
-              location.pathname === "/new-customers"
-                ? "bg-blue-500 text-white"
-                : ""
+            className={` text-white text-xl md:text-3xl hover:text-blue-800 font-semibold ${
+              location.pathname === "/new-customers" ? "text-blue-600" : ""
             }`}
             to="/new-customers"
+            onClick={() => handleOpen()}
           >
             NewCustomersAdded
           </Link>
         </li>
-        <li className="mr-1">
+        <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold ${
-              location.pathname === "/repeat-customers"
-                ? "bg-blue-500 text-white"
-                : ""
+            className={` text-white text-xl md:text-3xl hover:text-blue-800 font-semibold ${
+              location.pathname === "/repeat-customers" ? "text-blue-600" : ""
             }`}
             to="/repeat-customers"
+            onClick={() => handleOpen()}
           >
             NumberRepeatCustomers
           </Link>
         </li>
-        <li className="mr-1">
+        <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold ${
+            className={` text-white text-xl md:text-3xl hover:text-blue-800 font-semibold ${
               location.pathname === "/distribution-customers"
-                ? "bg-blue-500 text-white"
+                ? "text-blue-600"
                 : ""
             }`}
             to="/distribution-customers"
@@ -77,7 +95,7 @@ function Navbar() {
           </Link>
         </li>
       </ul>
-    </div>
+    </nav>
   );
 }
 
