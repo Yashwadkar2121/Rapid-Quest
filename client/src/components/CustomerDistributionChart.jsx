@@ -9,12 +9,13 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement);
 const CustomerDistributionChart = () => {
   const [chartData, setChartData] = useState(null);
 
+  // Fetch the API URL from environment variables
+  const BASE_URL = import.meta.env.VITE_APP_API_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "https://rapid-quest-server.onrender.com/api/analytics/customer-distribution"
-        );
+        const response = await axios.get(`${BASE_URL}/api/analytics/customer-distribution`);
 
         const data = response.data;
 
@@ -48,15 +49,14 @@ const CustomerDistributionChart = () => {
     };
 
     fetchData();
-  }, []);
+  }, [BASE_URL]);
 
   return (
     <div>
       <h1 className="text-center text-2xl font-medium my-5">
         Customer Distribution by City
       </h1>
-      {chartData && <Pie data={chartData} options={{ responsive: true }} />}
-      {!chartData && <p>Loading...</p>}
+      {chartData ? <Pie data={chartData} options={{ responsive: true }} /> : <p>Loading...</p>}
     </div>
   );
 };

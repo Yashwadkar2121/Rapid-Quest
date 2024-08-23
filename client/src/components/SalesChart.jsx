@@ -11,6 +11,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import PropTypes from "prop-types";
 
 ChartJS.register(
   CategoryScale,
@@ -21,7 +22,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-import PropTypes from "prop-types";
 
 const SalesChart = ({ chartType = "daily" }) => {
   const [dailyData, setDailyData] = useState(null);
@@ -30,12 +30,15 @@ const SalesChart = ({ chartType = "daily" }) => {
   const [yearlyData, setYearlyData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch the API URL from environment variables
+  const BASE_URL = import.meta.env.VITE_APP_API_URL;
+
   useEffect(() => {
-    axios
-      .get(
-        "https://rapid-quest-server.onrender.com/api/analytics/sales-over-time"
-      )
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/analytics/sales-over-time`
+        );
         setDailyData(
           formatChartData(response.data.dailySales, "date", "Total Sales")
         );
@@ -52,13 +55,15 @@ const SalesChart = ({ chartType = "daily" }) => {
         setYearlyData(
           formatChartData(response.data.yearlySales, "year", "Total Sales")
         );
-        setLoading(false); // Data has been loaded
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching the sales data", error);
-        setLoading(false); // End loading state even if there's an error
-      });
-  }, []);
+      } finally {
+        setLoading(false); // End loading state whether there's an error or not
+      }
+    };
+
+    fetchData();
+  }, [BASE_URL]);
 
   const formatChartData = (data, labelKey, dataKey) => {
     if (!data) {
@@ -124,6 +129,7 @@ const SalesChart = ({ chartType = "daily" }) => {
     </div>
   );
 };
+
 SalesChart.propTypes = {
   chartType: PropTypes.string,
 };

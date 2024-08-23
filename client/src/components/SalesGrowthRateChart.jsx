@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import PropTypes from "prop-types";
 
 ChartJS.register(
   CategoryScale,
@@ -19,18 +20,22 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-import PropTypes from "prop-types";
+
 const SalesGrowthRate = ({ chartType = "daily" }) => {
   const [dailyGrowthRate, setDailyGrowthRate] = useState([]);
   const [monthlyGrowthRate, setMonthlyGrowthRate] = useState([]);
   const [quarterlyGrowthRate, setQuarterlyGrowthRate] = useState([]);
   const [yearlyGrowthRate, setYearlyGrowthRate] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch the API URL from environment variables
+  const BASE_URL = import.meta.env.VITE_APP_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "https://rapid-quest-server.onrender.com/api/analytics/sales-growth-rate"
+          `${BASE_URL}/api/analytics/sales-growth-rate`
         );
         setDailyGrowthRate(response.data.dailyGrowthRate || []);
         setMonthlyGrowthRate(response.data.monthlyGrowthRate || []);
@@ -38,11 +43,13 @@ const SalesGrowthRate = ({ chartType = "daily" }) => {
         setYearlyGrowthRate(response.data.yearlyGrowthRate || []);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false); // End loading state whether there's an error or not
       }
     };
 
     fetchData();
-  }, []);
+  }, [BASE_URL]);
 
   const formatChartData = (data, labelKey, dataKey) => {
     if (!data) {
@@ -81,6 +88,10 @@ const SalesGrowthRate = ({ chartType = "daily" }) => {
     "year",
     "growthRate"
   );
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading indicator while data is being fetched
+  }
 
   return (
     <div>
@@ -124,7 +135,9 @@ const SalesGrowthRate = ({ chartType = "daily" }) => {
     </div>
   );
 };
+
 SalesGrowthRate.propTypes = {
   chartType: PropTypes.string,
 };
+
 export default SalesGrowthRate;

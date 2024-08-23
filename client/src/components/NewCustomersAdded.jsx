@@ -30,11 +30,14 @@ const NewCustomersAdded = ({ chartToDisplay }) => {
   });
   const [yearlyData, setYearlyData] = useState({ labels: [], datasets: [] });
 
+  // Fetch the API URL from environment variables
+  const BASE_URL = import.meta.env.VITE_APP_API_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "https://rapid-quest-server.onrender.com/api/analytics/new-customers"
+          `${BASE_URL}/api/analytics/new-customers`
         );
         const {
           dailyCustomers = [],
@@ -58,7 +61,7 @@ const NewCustomersAdded = ({ chartToDisplay }) => {
     };
 
     fetchData();
-  }, []);
+  }, [BASE_URL]);
 
   const formatChartData = (
     data = [],
@@ -86,7 +89,7 @@ const NewCustomersAdded = ({ chartToDisplay }) => {
       </h1>
 
       {(chartToDisplay === "daily" || !chartToDisplay) && (
-        <div className="my-5 ">
+        <div className="my-5">
           <h2 className="text-xl font-medium text-center">
             Daily New Customers
           </h2>
@@ -125,7 +128,7 @@ const NewCustomersAdded = ({ chartToDisplay }) => {
 };
 
 NewCustomersAdded.propTypes = {
-  chartToDisplay: PropTypes.string, // Define prop type for chartToDisplay
+  chartToDisplay: PropTypes.string,
 };
 
 export default NewCustomersAdded;
