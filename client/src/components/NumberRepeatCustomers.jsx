@@ -21,7 +21,7 @@ ChartJS.register(
   Legend
 );
 
-const NumberRepeatCustomers = ({ timeFrame = "daily" }) => {
+const NumberRepeatCustomers = ({ timeFrame }) => {
   const [chartData, setChartData] = useState({});
 
   // Fetch the API URL from environment variables
@@ -122,36 +122,38 @@ const NumberRepeatCustomers = ({ timeFrame = "daily" }) => {
     };
 
     fetchData();
-  }, [BASE_URL, timeFrame]);
+  }, [BASE_URL]);
 
   return (
     <div>
+      
       <h1 className="text-center text-2xl font-medium mt-5">
         Number of Repeat Customers
       </h1>
-      {timeFrame === "daily" && chartData.daily && (
-        <div className="my-5 ">
+
+      {(timeFrame === "daily" || !timeFrame) && chartData.daily && (
+        <div className="my-5">
           <h2 className="text-xl font-medium text-center">Daily Orders</h2>
           <Bar data={chartData.daily} options={{ responsive: true }} />
         </div>
       )}
 
-      {timeFrame === "monthly" && chartData.monthly && (
-        <div className="my-5 ">
+      {(timeFrame === "monthly" || !timeFrame) && chartData.monthly && (
+        <div className="my-5">
           <h2 className="text-xl font-medium text-center">Monthly Orders</h2>
           <Bar data={chartData.monthly} options={{ responsive: true }} />
         </div>
       )}
 
-      {timeFrame === "quarterly" && chartData.quarterly && (
-        <div className="my-5 ">
+      {(timeFrame === "quarterly" || !timeFrame) && chartData.quarterly && (
+        <div className="my-5">
           <h2 className="text-xl font-medium text-center">Quarterly Orders</h2>
           <Bar data={chartData.quarterly} options={{ responsive: true }} />
         </div>
       )}
 
-      {timeFrame === "yearly" && chartData.yearly && (
-        <div className="my-5 ">
+      {(timeFrame === "yearly" || !timeFrame) && chartData.yearly && (
+        <div className="my-5">
           <h2 className="text-xl font-medium text-center">Yearly Orders</h2>
           <Bar data={chartData.yearly} options={{ responsive: true }} />
         </div>

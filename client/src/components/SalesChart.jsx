@@ -23,7 +23,7 @@ ChartJS.register(
   Legend
 );
 
-const SalesChart = ({ chartType = "daily" }) => {
+const SalesChart = ({ chartType }) => {
   const [dailyData, setDailyData] = useState(null);
   const [monthlyData, setMonthlyData] = useState(null);
   const [quarterlyData, setQuarterlyData] = useState(null);
@@ -73,11 +73,11 @@ const SalesChart = ({ chartType = "daily" }) => {
       };
     }
     return {
-      labels: data?.map((item) => item[labelKey]) || [],
+      labels: data.map((item) => item[labelKey]),
       datasets: [
         {
           label: dataKey,
-          data: data?.map((item) => item.totalSales) || [],
+          data: data.map((item) => item.totalSales),
           borderColor: "rgba(75,192,192,1)",
           fill: false,
         },
@@ -91,35 +91,36 @@ const SalesChart = ({ chartType = "daily" }) => {
 
   return (
     <div>
+      
       <h1 className="text-center text-2xl font-medium mt-5">
         Total Sales Over Time
       </h1>
-      {chartType === "daily" && (
-        <div className="my-5 ">
+      {(chartType === "daily" || !chartType) && dailyData && (
+        <div className="my-5">
           <h2 className="text-xl font-medium text-center">
             Daily Sales Over Time
           </h2>
           <Line data={dailyData} />
         </div>
       )}
-      {chartType === "monthly" && (
-        <div className="my-5 ">
+      {(chartType === "monthly" || !chartType) && monthlyData && (
+        <div className="my-5">
           <h2 className="text-xl font-medium text-center">
             Monthly Sales Over Time
           </h2>
           <Line data={monthlyData} />
         </div>
       )}
-      {chartType === "quarterly" && (
-        <div className="my-5 ">
+      {(chartType === "quarterly" || !chartType) && quarterlyData && (
+        <div className="my-5">
           <h2 className="text-xl font-medium text-center">
             Quarterly Sales Over Time
           </h2>
           <Line data={quarterlyData} />
         </div>
       )}
-      {chartType === "yearly" && (
-        <div className="my-5 ">
+      {(chartType === "yearly" || !chartType) && yearlyData && (
+        <div className="my-5">
           <h2 className="text-xl font-medium text-center">
             Yearly Sales Over Time
           </h2>

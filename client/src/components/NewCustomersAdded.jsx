@@ -84,6 +84,7 @@ const NewCustomersAdded = ({ chartToDisplay }) => {
 
   return (
     <div>
+      
       <h1 className="text-center text-2xl font-medium mt-5">
         Customer Data Visualization
       </h1>

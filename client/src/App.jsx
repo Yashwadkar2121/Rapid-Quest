@@ -5,12 +5,14 @@ import NewCustomersAdded from "./components/NewCustomersAdded";
 import CustomerDistributionChart from "./components/CustomerDistributionChart";
 import NumberRepeatCustomers from "./components/NumberRepeatCustomers";
 import Home from "./components/Home";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <>
-      <div className="m-20 mt-10">
-        <BrowserRouter>
+      <BrowserRouter>
+        <Navbar />
+        <div className="m-20 mt-10">
           <Routes>
             <Route path="/" element={<Home />}></Route>
             <Route path="/sales-over-time" element={<SalesChart />}></Route>
@@ -31,8 +33,8 @@ function App() {
               element={<NumberRepeatCustomers />}
             ></Route>
           </Routes>
-        </BrowserRouter>
-      </div>
+        </div>
+      </BrowserRouter>
     </>
   );
 }

@@ -21,7 +21,7 @@ ChartJS.register(
   Legend
 );
 
-const SalesGrowthRate = ({ chartType = "daily" }) => {
+const SalesGrowthRate = ({ chartType }) => {
   const [dailyGrowthRate, setDailyGrowthRate] = useState([]);
   const [monthlyGrowthRate, setMonthlyGrowthRate] = useState([]);
   const [quarterlyGrowthRate, setQuarterlyGrowthRate] = useState([]);
@@ -90,49 +90,52 @@ const SalesGrowthRate = ({ chartType = "daily" }) => {
   );
 
   if (loading) {
-    return <div className="text-center text-xl font-bold">Loading...</div>; // Show loading indicator while data is being fetched
+    return <div className="text-center text-xl font-bold">Loading...</div>;
   }
 
   return (
     <div>
+      
       <h1 className="text-center text-2xl font-medium mt-5">
         Sales Growth Rate Visualization
       </h1>
 
-      {chartType === "daily" && (
-        <div className="my-5 ">
+      {(chartType === "daily" || !chartType) && dailyGrowthRate.length > 0 && (
+        <div className="my-5">
           <h2 className="text-xl font-medium text-center">Daily Growth Rate</h2>
           <Bar data={dailyChartData} options={{ responsive: true }} />
         </div>
       )}
 
-      {chartType === "monthly" && (
-        <div className="my-5 ">
-          <h2 className="text-xl font-medium text-center">
-            Monthly Growth Rate
-          </h2>
-          <Bar data={monthlyChartData} options={{ responsive: true }} />
-        </div>
-      )}
+      {(chartType === "monthly" || !chartType) &&
+        monthlyGrowthRate.length > 0 && (
+          <div className="my-5">
+            <h2 className="text-xl font-medium text-center">
+              Monthly Growth Rate
+            </h2>
+            <Bar data={monthlyChartData} options={{ responsive: true }} />
+          </div>
+        )}
 
-      {chartType === "quarterly" && (
-        <div className="my-5 ">
-          <h2 className="text-xl font-medium text-center">
-            Quarterly Growth Rate
-          </h2>
-          <Bar data={quarterlyChartData} options={{ responsive: true }} />
-        </div>
-      )}
+      {(chartType === "quarterly" || !chartType) &&
+        quarterlyGrowthRate.length > 0 && (
+          <div className="my-5">
+            <h2 className="text-xl font-medium text-center">
+              Quarterly Growth Rate
+            </h2>
+            <Bar data={quarterlyChartData} options={{ responsive: true }} />
+          </div>
+        )}
 
-      {chartType === "yearly" && (
-        <div className="my-5 ">
-          <h2 className="text-xl font-medium text-center">
-            Yearly Growth Rate
-          </h2>
-          <Bar data={yearlyChartData} options={{ responsive: true }} />
-        </div>
-      )}
-      
+      {(chartType === "yearly" || !chartType) &&
+        yearlyGrowthRate.length > 0 && (
+          <div className="my-5">
+            <h2 className="text-xl font-medium text-center">
+              Yearly Growth Rate
+            </h2>
+            <Bar data={yearlyChartData} options={{ responsive: true }} />
+          </div>
+        )}
     </div>
   );
 };
