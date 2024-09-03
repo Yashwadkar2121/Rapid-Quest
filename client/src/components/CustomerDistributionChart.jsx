@@ -1,10 +1,17 @@
 // src/components/CustomerDistributionChart.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
+import { PolarArea } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  RadialLinearScale,
+  ArcElement,
+} from "chart.js";
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement);
+ChartJS.register(Title, Tooltip, Legend, RadialLinearScale, ArcElement);
 
 const CustomerDistributionChart = () => {
   const [chartData, setChartData] = useState(null);
@@ -27,19 +34,17 @@ const CustomerDistributionChart = () => {
             {
               label: "Customer Distribution by City",
               data: data.map((item) => item.count),
-              backgroundColor: data.map(
-                () =>
-                  `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(
-                    Math.random() * 255
-                  )}, ${Math.floor(Math.random() * 255)}, 0.5)`
-              ),
-              borderColor: data.map(
-                () =>
-                  `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(
-                    Math.random() * 255
-                  )}, ${Math.floor(Math.random() * 255)}, 1)`
-              ),
-              borderWidth: 1,
+              backgroundColor: data.map((item) => {
+                if (item.count <= 3) {
+                  return "rgba(255, 0, 0, 1)"; // Red color
+                } else if (item.count >= 4 && item.count <= 9) {
+                  return "rgba(255, 255, 0, 1)"; // Yellow color
+                } else {
+                  return "rgba(0, 128, 0, 1)"; // Green color
+                }
+              }),
+              borderColor: "rgba(255, 255, 255, 1)", // White border color
+              borderWidth: 2, // Border width
             },
           ],
         });
@@ -59,7 +64,7 @@ const CustomerDistributionChart = () => {
         Customer Distribution by City
       </h1>
       {chartData ? (
-        <Pie data={chartData} options={{ responsive: true }} />
+        <PolarArea data={chartData} options={{ responsive: true }} />
       ) : (
         <p className="text-center text-xl font-bold">Loading...</p>
       )}

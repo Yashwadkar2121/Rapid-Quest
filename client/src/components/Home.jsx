@@ -9,8 +9,7 @@ const Home = () => {
   return (
     <div>
       <h1 className="font-bold text-xl md:text-5xl text-center mb-5">
-        Transforming Shopify Data into Actionable Insights with Real-Time
-        Visualizations
+        Transforming Shopify Data into Actionable Insights with Visualizations
       </h1>
       <div className="flex flex-col md:flex-row md:justify-between md:items-center md:gap-5">
         <div className="w-full md:w-1/2">
@@ -24,6 +23,7 @@ const Home = () => {
             <SalesGrowthRate chartType="daily" />
           </Link>
         </div>
+        s
       </div>
       <div className="flex flex-col md:flex-row md:justify-between md:items-center md:gap-5">
         <div className="w-full md:w-1/2">
@@ -37,12 +37,11 @@ const Home = () => {
           </Link>
         </div>
       </div>
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center md:gap-5">
-        <div className="w-full md:w-1/2">
-          <Link to="/repeat-customers">
-            <NumberRepeatCustomers timeFrame="yearly" />
-          </Link>
-        </div>
+
+      <div className="w-full">
+        <Link to="/repeat-customers">
+          <NumberRepeatCustomers timeFrame="yearly" />
+        </Link>
       </div>
     </div>
   );
