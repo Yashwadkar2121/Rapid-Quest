@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 function Navbar() {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -8,8 +9,20 @@ function Navbar() {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
   return (
-    <nav className="bg-slate-500 text-white ">
+    <nav className="text-white bg-[#1e3963]">
       <div className="flex justify-between p-2 md:p-7 ">
         <h2 className="text-xl md:text-3xl lg:text-4xl">Dashboard</h2>
         {isOpen ? (
@@ -23,7 +36,7 @@ function Navbar() {
         )}
       </div>
       <ul
-        className={`  ${
+        className={` ${
           isOpen
             ? "text-right min-h-screen p-2 md:p-7 flex flex-col justify-center pb-72"
             : "hidden"
@@ -31,68 +44,68 @@ function Navbar() {
       >
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={` text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-800 font-semibold ${
-              location.pathname === "/" ? "text-blue-600 " : ""
+            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
+              location.pathname === "/" ? "text-blue-600" : ""
             }`}
             to="/"
-            onClick={() => handleOpen()}
+            onClick={handleOpen}
           >
             Home
           </Link>
         </li>
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={` text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-800 font-semibold ${
+            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
               location.pathname === "/sales-over-time" ? "text-blue-600" : ""
             }`}
             to="/sales-over-time"
-            onClick={() => handleOpen()}
+            onClick={handleOpen}
           >
-            Sales Chart
+            Sales
           </Link>
         </li>
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={` text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-800 font-semibold ${
+            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
               location.pathname === "/sales-growth-rate" ? "text-blue-600" : ""
             }`}
             to="/sales-growth-rate"
-            onClick={() => handleOpen()}
+            onClick={handleOpen}
           >
-            Growth Rate
+            Growth
           </Link>
         </li>
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={` text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-800 font-semibold ${
+            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
               location.pathname === "/new-customers" ? "text-blue-600" : ""
             }`}
             to="/new-customers"
-            onClick={() => handleOpen()}
+            onClick={handleOpen}
           >
-            New Customers
+            New Customer
           </Link>
         </li>
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={` text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-800 font-semibold ${
+            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
               location.pathname === "/repeat-customers" ? "text-blue-600" : ""
             }`}
             to="/repeat-customers"
-            onClick={() => handleOpen()}
+            onClick={handleOpen}
           >
-            Repeat Customers
+            Repeat Customer
           </Link>
         </li>
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={` text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-800 font-semibold ${
+            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
               location.pathname === "/distribution-customers"
                 ? "text-blue-600"
                 : ""
             }`}
             to="/distribution-customers"
-            onClick={() => handleOpen()}
+            onClick={handleOpen}
           >
             Distribution Chart
           </Link>
