@@ -17,7 +17,7 @@ const CustomerDistributionChart = () => {
   const [chartData, setChartData] = useState(null);
 
   // Fetch the API URL from environment variables
-  const BASE_URL = import.meta.env.VITE_APP_API_URL;
+  const BASE_URL = import.meta.env.VITE_APP_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {

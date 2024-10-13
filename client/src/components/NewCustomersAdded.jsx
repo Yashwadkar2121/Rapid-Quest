@@ -31,7 +31,7 @@ const NewCustomersAdded = ({ chartToDisplay }) => {
   const [yearlyData, setYearlyData] = useState({ labels: [], datasets: [] });
 
   // Fetch the API URL from environment variables
-  const BASE_URL = import.meta.env.VITE_APP_API_URL;
+  const BASE_URL = import.meta.env.VITE_APP_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,7 +84,6 @@ const NewCustomersAdded = ({ chartToDisplay }) => {
 
   return (
     <div>
-      
       <h1 className="text-center text-2xl font-medium mt-5">
         Customer Data Visualization
       </h1>

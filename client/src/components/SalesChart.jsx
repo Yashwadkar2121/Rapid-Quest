@@ -31,7 +31,7 @@ const SalesChart = ({ chartType }) => {
   const [loading, setLoading] = useState(true);
 
   // Fetch the API URL from environment variables
-  const BASE_URL = import.meta.env.VITE_APP_API_URL;
+  const BASE_URL = import.meta.env.VITE_APP_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,7 +91,6 @@ const SalesChart = ({ chartType }) => {
 
   return (
     <div>
-      
       <h1 className="text-center text-2xl font-medium mt-5">
         Total Sales Over Time
       </h1>
