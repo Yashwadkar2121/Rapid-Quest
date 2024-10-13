@@ -35,10 +35,10 @@ const CustomerDistributionChart = () => {
               label: "Customer Distribution by City",
               data: data.map((item) => item.count),
               backgroundColor: data.map((item) => {
-                if (item.count <= 3) {
+                if (item.count <= 1) {
                   return "rgba(255, 0, 0, 1)"; // Red color
-                } else if (item.count >= 4 && item.count <= 9) {
-                  return "rgba(255, 255, 0, 1)"; // Yellow color
+                  // } else if (item.count >= 1 && item.count <= 2) {
+                  //   return "rgba(255, 255, 0, 1)"; // Yellow color
                 } else {
                   return "rgba(0, 128, 0, 1)"; // Green color
                 }

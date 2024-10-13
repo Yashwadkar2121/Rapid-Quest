@@ -23,7 +23,6 @@ const Home = () => {
             <SalesGrowthRate chartType="daily" />
           </Link>
         </div>
-        s
       </div>
       <div className="flex flex-col md:flex-row md:justify-between md:items-center md:gap-5">
         <div className="w-full md:w-1/2">
