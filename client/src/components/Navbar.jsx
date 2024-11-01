@@ -38,13 +38,13 @@ function Navbar() {
       <ul
         className={` ${
           isOpen
-            ? "text-right min-h-screen p-2 md:p-7 flex flex-col justify-center pb-72"
+            ? "text-center lg:text-right min-h-screen p-2 md:p-7 flex flex-col justify-center pb-72"
             : "hidden"
         }`}
       >
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
+            className={`text-white text-3xl md:text-4xl hover:text-blue-500 font-semibold ${
               location.pathname === "/" ? "text-blue-600" : ""
             }`}
             to="/"
@@ -55,7 +55,7 @@ function Navbar() {
         </li>
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
+            className={`text-white text-3xl md:text-4xl hover:text-blue-500 font-semibold ${
               location.pathname === "/sales-over-time" ? "text-blue-600" : ""
             }`}
             to="/sales-over-time"
@@ -66,7 +66,7 @@ function Navbar() {
         </li>
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
+            className={`text-white text-3xl md:text-4xl hover:text-blue-500 font-semibold ${
               location.pathname === "/sales-growth-rate" ? "text-blue-600" : ""
             }`}
             to="/sales-growth-rate"
@@ -77,7 +77,7 @@ function Navbar() {
         </li>
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
+            className={`text-white text-3xl md:text-4xl hover:text-blue-500 font-semibold ${
               location.pathname === "/new-customers" ? "text-blue-600" : ""
             }`}
             to="/new-customers"
@@ -88,7 +88,7 @@ function Navbar() {
         </li>
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
+            className={`text-white text-3xl md:text-4xl hover:text-blue-500 font-semibold ${
               location.pathname === "/repeat-customers" ? "text-blue-600" : ""
             }`}
             to="/repeat-customers"
@@ -99,7 +99,7 @@ function Navbar() {
         </li>
         <li className="mr-1 mt-3 md:mt-5">
           <Link
-            className={`text-white text-xl md:text-3xl lg:text-4xl hover:text-blue-500 font-semibold ${
+            className={`text-white text-3xl md:text-4xl hover:text-blue-500 font-semibold ${
               location.pathname === "/distribution-customers"
                 ? "text-blue-600"
                 : ""
