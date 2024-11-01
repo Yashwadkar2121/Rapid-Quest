@@ -13,6 +13,8 @@ import {
 
 ChartJS.register(Title, Tooltip, Legend, RadialLinearScale, ArcElement);
 
+import Spinner from "./Spinner";
+
 const CustomerDistributionChart = () => {
   const [chartData, setChartData] = useState(null);
 
@@ -66,7 +68,9 @@ const CustomerDistributionChart = () => {
       {chartData ? (
         <PolarArea data={chartData} options={{ responsive: true }} />
       ) : (
-        <p className="text-center text-xl font-bold">Loading...</p>
+        <p className="flex justify-center items-center">
+          <Spinner />
+        </p>
       )}
     </div>
   );

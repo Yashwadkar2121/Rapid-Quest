@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Bar } from "react-chartjs-2";
 import axios from "axios";
 import {
@@ -11,6 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import PropTypes from "prop-types";
+import Spinner from "./Spinner";
 
 ChartJS.register(
   CategoryScale,
@@ -23,12 +24,15 @@ ChartJS.register(
 
 const NumberRepeatCustomers = ({ timeFrame }) => {
   const [chartData, setChartData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch the API URL from environment variables
   const BASE_URL = import.meta.env.VITE_APP_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(
           `${BASE_URL}/api/analytics/repeat-customers`
@@ -116,13 +120,35 @@ const NumberRepeatCustomers = ({ timeFrame }) => {
             ],
           },
         });
+        setError(null);
       } catch (error) {
+        setError("Failed to load data. Please try again later.");
         console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
   }, [BASE_URL]);
+
+  const chartOptions = useMemo(
+    () => ({
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        tooltip: {
+          enabled: true,
+          callbacks: {
+            label: (context) => `${context.dataset.label}: ${context.raw}`,
+          },
+        },
+      },
+    }),
+    []
+  );
 
   return (
     <div>
@@ -130,32 +156,46 @@ const NumberRepeatCustomers = ({ timeFrame }) => {
         Number of Repeat Customers
       </h1>
 
-      {(timeFrame === "daily" || !timeFrame) && chartData.daily && (
-        <div className="my-5">
-          <h2 className="text-xl font-medium text-center">Daily Orders</h2>
-          <Bar data={chartData.daily} options={{ responsive: true }} />
+      {isLoading ? (
+        <div className="flex justify-center items-center">
+          <Spinner />
         </div>
-      )}
+      ) : error ? (
+        <p className="text-center text-red-500">{error}</p>
+      ) : (
+        <>
+          {(timeFrame === "daily" || !timeFrame) && chartData.daily && (
+            <div className="my-5">
+              <h2 className="text-xl font-medium text-center">Daily Orders</h2>
+              <Bar data={chartData.daily} options={chartOptions} />
+            </div>
+          )}
 
-      {(timeFrame === "monthly" || !timeFrame) && chartData.monthly && (
-        <div className="my-5">
-          <h2 className="text-xl font-medium text-center">Monthly Orders</h2>
-          <Bar data={chartData.monthly} options={{ responsive: true }} />
-        </div>
-      )}
+          {(timeFrame === "monthly" || !timeFrame) && chartData.monthly && (
+            <div className="my-5">
+              <h2 className="text-xl font-medium text-center">
+                Monthly Orders
+              </h2>
+              <Bar data={chartData.monthly} options={chartOptions} />
+            </div>
+          )}
 
-      {(timeFrame === "quarterly" || !timeFrame) && chartData.quarterly && (
-        <div className="my-5">
-          <h2 className="text-xl font-medium text-center">Quarterly Orders</h2>
-          <Bar data={chartData.quarterly} options={{ responsive: true }} />
-        </div>
-      )}
+          {(timeFrame === "quarterly" || !timeFrame) && chartData.quarterly && (
+            <div className="my-5">
+              <h2 className="text-xl font-medium text-center">
+                Quarterly Orders
+              </h2>
+              <Bar data={chartData.quarterly} options={chartOptions} />
+            </div>
+          )}
 
-      {(timeFrame === "yearly" || !timeFrame) && chartData.yearly && (
-        <div className="my-5">
-          <h2 className="text-xl font-medium text-center">Yearly Orders</h2>
-          <Bar data={chartData.yearly} options={{ responsive: true }} />
-        </div>
+          {(timeFrame === "yearly" || !timeFrame) && chartData.yearly && (
+            <div className="my-5">
+              <h2 className="text-xl font-medium text-center">Yearly Orders</h2>
+              <Bar data={chartData.yearly} options={chartOptions} />
+            </div>
+          )}
+        </>
       )}
     </div>
   );

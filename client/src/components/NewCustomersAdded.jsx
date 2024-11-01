@@ -11,6 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import PropTypes from "prop-types";
+import Spinner from "./Spinner"; // Import Spinner component
 
 ChartJS.register(
   CategoryScale,
@@ -29,12 +30,13 @@ const NewCustomersAdded = ({ chartToDisplay }) => {
     datasets: [],
   });
   const [yearlyData, setYearlyData] = useState({ labels: [], datasets: [] });
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
-  // Fetch the API URL from environment variables
   const BASE_URL = import.meta.env.VITE_APP_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true); // Set loading to true before fetching data
       try {
         const response = await axios.get(
           `${BASE_URL}/api/analytics/new-customers`
@@ -57,6 +59,8 @@ const NewCustomersAdded = ({ chartToDisplay }) => {
         setYearlyData(formatChartData(yearlyCustomers, "year", "newCustomers"));
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false); // Set loading to false once data is fetched
       }
     };
 
@@ -88,40 +92,48 @@ const NewCustomersAdded = ({ chartToDisplay }) => {
         Customer Data Visualization
       </h1>
 
-      {(chartToDisplay === "daily" || !chartToDisplay) && (
-        <div className="my-5">
-          <h2 className="text-xl font-medium text-center">
-            Daily New Customers
-          </h2>
-          <Bar data={dailyData} options={{ responsive: true }} />
+      {isLoading ? (
+        <div className="flex justify-center items-center">
+          <Spinner /> {/* Show spinner when loading */}
         </div>
-      )}
+      ) : (
+        <>
+          {(chartToDisplay === "daily" || !chartToDisplay) && (
+            <div className="my-5">
+              <h2 className="text-xl font-medium text-center">
+                Daily New Customers
+              </h2>
+              <Bar data={dailyData} options={{ responsive: true }} />
+            </div>
+          )}
 
-      {(chartToDisplay === "monthly" || !chartToDisplay) && (
-        <div className="my-5">
-          <h2 className="text-xl font-medium text-center">
-            Monthly New Customers
-          </h2>
-          <Bar data={monthlyData} options={{ responsive: true }} />
-        </div>
-      )}
+          {(chartToDisplay === "monthly" || !chartToDisplay) && (
+            <div className="my-5">
+              <h2 className="text-xl font-medium text-center">
+                Monthly New Customers
+              </h2>
+              <Bar data={monthlyData} options={{ responsive: true }} />
+            </div>
+          )}
 
-      {(chartToDisplay === "quarterly" || !chartToDisplay) && (
-        <div className="my-5">
-          <h2 className="text-xl font-medium text-center">
-            Quarterly New Customers
-          </h2>
-          <Bar data={quarterlyData} options={{ responsive: true }} />
-        </div>
-      )}
+          {(chartToDisplay === "quarterly" || !chartToDisplay) && (
+            <div className="my-5">
+              <h2 className="text-xl font-medium text-center">
+                Quarterly New Customers
+              </h2>
+              <Bar data={quarterlyData} options={{ responsive: true }} />
+            </div>
+          )}
 
-      {(chartToDisplay === "yearly" || !chartToDisplay) && (
-        <div className="my-5">
-          <h2 className="text-xl font-medium text-center">
-            Yearly New Customers
-          </h2>
-          <Bar data={yearlyData} options={{ responsive: true }} />
-        </div>
+          {(chartToDisplay === "yearly" || !chartToDisplay) && (
+            <div className="my-5">
+              <h2 className="text-xl font-medium text-center">
+                Yearly New Customers
+              </h2>
+              <Bar data={yearlyData} options={{ responsive: true }} />
+            </div>
+          )}
+        </>
       )}
     </div>
   );

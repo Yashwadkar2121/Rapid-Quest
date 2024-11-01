@@ -12,6 +12,7 @@ import {
   Legend,
 } from "chart.js";
 import PropTypes from "prop-types";
+import Spinner from "./Spinner";
 
 ChartJS.register(
   CategoryScale,
@@ -86,7 +87,9 @@ const SalesChart = ({ chartType }) => {
   };
 
   if (loading) {
-    return <div className="text-center text-xl font-bold">Loading...</div>;
+    return  <p className="flex justify-center items-center">
+    <Spinner />
+  </p>;
   }
 
   return (
